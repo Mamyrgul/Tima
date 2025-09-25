@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: wedding-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: wedding
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - wedding-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  wedding-backend:
+    build: .
+    container_name: wedding-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/wedding
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+    restart: unless-stopped
+
+volumes:
+  wedding-db-data:
+
